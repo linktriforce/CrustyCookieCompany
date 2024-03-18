@@ -1,41 +1,49 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>80</x><y>0</y><w>210</w><h>90</h></coordinates><panel_attributes>Bakery
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>124</x><y>50</y><w>210</w><h>90</h></coordinates><panel_attributes>Bakery
 --
 - Name
 - Specialization
 - Address
-- Contact Number</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>80</x><y>190</y><w>210</w><h>70</h></coordinates><panel_attributes>Cookie
+- Contact Number</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>124</x><y>240</y><w>210</w><h>70</h></coordinates><panel_attributes>Cookie
 --
 - Name
 - Recipe
-- Production Year</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>40</y><w>210</w><h>90</h></coordinates><panel_attributes>Ingredient
+- Production Year</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>544</x><y>240</y><w>210</w><h>70</h></coordinates><panel_attributes>Ingredient
 --
 - Name
 - Quantity
-- Unit:
-- Last Delivery Date</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>370</x><y>300</y><w>210</w><h>60</h></coordinates><panel_attributes>Warehouse
+- Unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>534</x><y>50</y><w>210</w><h>60</h></coordinates><panel_attributes>Warehouse
 --
 - Location
-- Capacity</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>0</x><y>430</y><w>210</w><h>60</h></coordinates><panel_attributes>Order
+- Capacity</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>444</x><y>420</y><w>210</w><h>70</h></coordinates><panel_attributes>WholesaleCustomer
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>60</x><y>540</y><w>210</w><h>60</h></coordinates><panel_attributes>Order
+- Customer
+- Address</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>384</x><y>150</y><w>110</w><h>50</h></coordinates><panel_attributes>&lt;&lt;Recipe&gt;&gt;
 --
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>340</x><y>540</y><w>210</w><h>60</h></coordinates><panel_attributes>Order
---
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>420</y><w>210</w><h>60</h></coordinates><panel_attributes>Order
---
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>100</x><y>300</y><w>210</w><h>70</h></coordinates><panel_attributes>Order
+- Name</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>204</x><y>130</y><w>60</w><h>130</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+sells </panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>250</y><w>240</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=1..*
+m2=0..*
+contains</panel_attributes><additional_attributes>220;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>424</x><y>190</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>624</x><y>100</y><w>50</w><h>160</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+has</panel_attributes><additional_attributes>10;10;10;140</additional_attributes></element><element><id>UMLClass</id><coordinates><x>114</x><y>420</y><w>210</w><h>70</h></coordinates><panel_attributes>Order
 --
 - Customer
 - Products
-- Delivery Date
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>390</x><y>190</y><w>210</w><h>70</h></coordinates><panel_attributes>Recipe
+- DeliveryDate
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>324</x><y>70</y><w>230</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+has</panel_attributes><additional_attributes>10;20;210;20</additional_attributes></element><element><id>Relation</id><coordinates><x>204</x><y>300</y><w>70</w><h>140</h></coordinates><panel_attributes>lt=-
+m1=1..*
+m2=0..*
+contain</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>Relation</id><coordinates><x>314</x><y>440</y><w>150</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+placed by</panel_attributes><additional_attributes>130;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>704</x><y>330</y><w>210</w><h>70</h></coordinates><panel_attributes>Raw_Material_Ingredient
 --
 - Name
-- Ingredient
-- Amount</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>160</x><y>80</y><w>60</w><h>130</h></coordinates><panel_attributes>lt=-
-m1=1
-m2=0..*
-sells </panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>280</x><y>200</y><w>130</w><h>50</h></coordinates><panel_attributes>lt=-
-m1=1
-m2=0..*
-sells </panel_attributes><additional_attributes>110;20;10;20</additional_attributes></element></diagram>
+- Quantity
+- Unit</panel_attributes><additional_attributes></additional_attributes></element></diagram>
