@@ -1,46 +1,49 @@
-<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>360</x><y>40</y><w>210</w><h>90</h></coordinates><panel_attributes>Bakery
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>480</x><y>374</y><w>240</w><h>90</h></coordinates><panel_attributes>Cookie
 --
-- Name
-- Address
-- Contact Number</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>360</x><y>230</y><w>210</w><h>70</h></coordinates><panel_attributes>Cookie
+_name_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>374</y><w>210</w><h>100</h></coordinates><panel_attributes>Ingredient
 --
-- Name
-- Recipe
-- Production Year</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>810</x><y>230</y><w>140</w><h>70</h></coordinates><panel_attributes>Ingredient
+_name_
+- quantity
+- unit
+- purchaseDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>60</x><y>574</y><w>250</w><h>80</h></coordinates><panel_attributes>WholesaleCustomer
 --
-- Name
-- Quantity
-- Unit</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>770</x><y>40</y><w>210</w><h>60</h></coordinates><panel_attributes>Warehouse
+_customerID_
+- name
+- address</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>750</x><y>274</y><w>110</w><h>50</h></coordinates><panel_attributes>&lt;&lt;Recipe&gt;&gt;
 --
-- Location
-- Capacity</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>50</x><y>230</y><w>210</w><h>70</h></coordinates><panel_attributes>WholesaleCustomer
+- amount</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>710</x><y>404</y><w>210</w><h>50</h></coordinates><panel_attributes>lt=-
+m1=*
+m2=0..*
+</panel_attributes><additional_attributes>190;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>790</x><y>314</y><w>30</w><h>130</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;110;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>574</y><w>250</w><h>100</h></coordinates><panel_attributes>Order
 --
-- Customer
-- Address</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>620</x><y>140</y><w>110</w><h>50</h></coordinates><panel_attributes>&lt;&lt;Recipe&gt;&gt;
---
-- Name</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>120</y><w>60</w><h>130</h></coordinates><panel_attributes>lt=-
+_orderID_
+- products
+- deliveryDate
+- orderDate
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>570</x><y>454</y><w>40</w><h>140</h></coordinates><panel_attributes>lt=-
+m1=*
+m2=*
+</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>594</y><w>190</w><h>50</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=0..*
-sells </panel_attributes><additional_attributes>10;10;10;110</additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>240</y><w>270</w><h>50</h></coordinates><panel_attributes>lt=-
+placed by</panel_attributes><additional_attributes>10;20;170;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>70</x><y>384</y><w>240</w><h>100</h></coordinates><panel_attributes>FreezeStorage
+--
+- units
+- storagePeriod
+- capacity
+- storedUnits</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>480</x><y>114</y><w>240</w><h>110</h></coordinates><panel_attributes>Pallets
+--
+_palletID_
+- label
+- isBlocked
+- productionDate
+-pDeliveryDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>570</x><y>214</y><w>70</w><h>180</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..*
+contain</panel_attributes><additional_attributes>10;10;10;160</additional_attributes></element><element><id>Relation</id><coordinates><x>300</x><y>404</y><w>200</w><h>50</h></coordinates><panel_attributes>lt=-
 m1=1..*
 m2=0..*
-contains</panel_attributes><additional_attributes>250;20;10;20</additional_attributes></element><element><id>Relation</id><coordinates><x>660</x><y>180</y><w>30</w><h>80</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>860</x><y>90</y><w>50</w><h>160</h></coordinates><panel_attributes>lt=-
-m1=1
-m2=0..*
-has</panel_attributes><additional_attributes>10;10;10;140</additional_attributes></element><element><id>UMLClass</id><coordinates><x>350</x><y>410</y><w>210</w><h>70</h></coordinates><panel_attributes>Order
+contain</panel_attributes><additional_attributes>180;20;10;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>770</x><y>484</y><w>110</w><h>60</h></coordinates><panel_attributes>&lt;&lt;productType&gt;&gt;
 --
-- Products
-- DeliveryDate
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>560</x><y>60</y><w>230</w><h>50</h></coordinates><panel_attributes>lt=-
-m1=1
-m2=1
-has</panel_attributes><additional_attributes>10;20;210;20</additional_attributes></element><element><id>Relation</id><coordinates><x>440</x><y>290</y><w>70</w><h>140</h></coordinates><panel_attributes>lt=-
-m1=1..*
-m2=0..*
-contain</panel_attributes><additional_attributes>10;10;10;120</additional_attributes></element><element><id>Relation</id><coordinates><x>130</x><y>290</y><w>240</w><h>180</h></coordinates><panel_attributes>lt=-
-m1=1
-m2=0..*
-placed by</panel_attributes><additional_attributes>10;10;10;150;220;150</additional_attributes></element><element><id>Relation</id><coordinates><x>130</x><y>60</y><w>250</w><h>190</h></coordinates><panel_attributes>lt=-
-m1=1..*
-m2=1
-delivers to</panel_attributes><additional_attributes>10;170;10;20;230;20</additional_attributes></element></diagram>
+- name</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>570</x><y>504</y><w>220</w><h>30</h></coordinates><panel_attributes>lt=&lt;&lt;.</panel_attributes><additional_attributes>10;10;200;10</additional_attributes></element></diagram>
