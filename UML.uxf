@@ -32,7 +32,7 @@ placed by</panel_attributes><additional_attributes>260;20;10;20</additional_attr
 _- palletID_
 - isBlocked
 - productionDate
-- deliverdDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>415</x><y>111</y><w>56</w><h>128</h></coordinates><panel_attributes>lt=-
+- deliveredDate</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>415</x><y>111</y><w>56</w><h>128</h></coordinates><panel_attributes>lt=-
 m1=1
 m2=1..*
 contain</panel_attributes><additional_attributes>10;10;10;140</additional_attributes></element><element><id>UMLClass</id><coordinates><x>535</x><y>303</y><w>88</w><h>48</h></coordinates><panel_attributes>&lt;&lt;CookieOrder&gt;&gt;
