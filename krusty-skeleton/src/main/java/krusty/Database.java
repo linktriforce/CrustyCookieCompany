@@ -3,8 +3,6 @@ package krusty;
 import spark.Request;
 import spark.Response;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -48,6 +46,17 @@ public class Database {
 	// TODO: Implement and change output in all methods below!
 
 	public String getCustomers(Request req, Response res) {
+		//Detta är bara testkod. Kollade så att conenction till databasen fungerade vilken den nu gör!
+		String sql = "select * from WholesaleCustomer";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)){
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				System.out.println(rs.getString("name"));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		return "{}";
 	}
 
