@@ -11,31 +11,20 @@ import java.sql.*;
 import static krusty.Jsonizer.toJson;
 
 public class Database {
-	/**
-	 * Modify it to fit your environment and then use this string when connecting to your database!
-	 */
-	private static final String jdbcString = "jdbc:mysql://localhost/krusty";
 
-	// For use with MySQL or PostgreSQL
+	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
 	private static final String jdbcUsername = "hbg29";
 	private static final String jdbcPassword = "pqx717bq";
 
 	private Connection conn;
 
-	 /**
-     * Create the database interface object. Connection to the database
-     * is performed later.
-     */
     public Database() {
         conn = null;
     }
 
 	public void connect() {
 		try {       	
-        	// Use "jdbc:mysql://puccini.cs.lth.se/" + userName if you using our shared server
-        	// If outside, this statement will hang until timeout.
-            conn = DriverManager.getConnection 
-                ("jdbc:mysql://puccini.cs.lth.se/hbg29", jdbcUsername, jdbcPassword);
+            conn = DriverManager.getConnection(jdbcString, jdbcUsername, jdbcPassword);
         }
         catch (SQLException e) {
             System.err.println(e);
