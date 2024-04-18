@@ -81,6 +81,11 @@ public class Database {
 	}
 
 	public String createPallet(Request req, Response res) {
-		return "{}";
+		String cookieName = req.queryParams("cookieName");
+
+		if (cookieName == null || cookieName.isEmpty()){
+			res.status(400);
+			return "Missing param: cookieName";
+		}
 	}
 }
