@@ -11,8 +11,8 @@ import java.sql.*;
 import static krusty.Jsonizer.toJson;
 
 public class Database {
-
-	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
+	
+	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/";
 	private static final String jdbcUsername = "hbg29";
 	private static final String jdbcPassword = "pqx717bq";
 
