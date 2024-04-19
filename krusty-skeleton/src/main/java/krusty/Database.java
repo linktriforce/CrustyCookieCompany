@@ -12,7 +12,7 @@ import static krusty.Jsonizer.toJson;
 
 public class Database {
 	
-	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/";
+	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
 	private static final String jdbcUsername = "hbg29";
 	private static final String jdbcPassword = "pqx717bq";
 
@@ -30,6 +30,7 @@ public class Database {
             System.err.println(e);
             e.printStackTrace();
         }
+		getCustomers(null, null);
 	}
 
 	// TODO: Implement and change output in all methods below!
