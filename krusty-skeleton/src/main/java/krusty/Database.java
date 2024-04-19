@@ -87,5 +87,19 @@ public class Database {
 			res.status(400);
 			return "Missing param: cookieName";
 		}
+
+		try {
+			
+			String sql = "INSERT INTO Pallets (cookieName) VALUES (?)";
+			PreparedStatement  ps = conn.prepareStatement(sql);
+			ps.setString(1, cookieName);
+			ps.executeUpdate();
+			ps.close();
+			return "Created Pallet";
+		} catch (SQLException e) {
+			res.status(500);
+			return "Failed to create pallet";
+			// TODO: handle exception
+		}
 	}
 }
