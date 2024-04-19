@@ -1,5 +1,8 @@
 package krusty;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 
@@ -11,7 +14,7 @@ import java.sql.*;
 import static krusty.Jsonizer.toJson;
 
 public class Database {
-	
+
 	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
 	private static final String jdbcUsername = "hbg29";
 	private static final String jdbcPassword = "pqx717bq";
@@ -23,7 +26,7 @@ public class Database {
     }
 
 	public void connect() {
-		try {       	
+		try {
             conn = DriverManager.getConnection(jdbcString, jdbcUsername, jdbcPassword);
         }
         catch (SQLException e) {
@@ -50,12 +53,42 @@ public class Database {
 		return "{}";
 	}
 
-	public String getRawMaterials(Request req, Response res) {
-		return "{}";
+	public String getRawMaterials(Request req, Response res) throws SQLException, JSONException {
+		String sql = "SELECT name, quantityTotal AS amount, unit FROM Ingredient";
+		Statement statement = conn.createStatement();
+		ResultSet resultSet = statement.executeQuery(sql);
+
+		JSONArray jsonArray = new JSONArray();
+		while (resultSet.next()) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("name", resultSet.getString("name"));
+			jsonObject.put("amount", resultSet.getInt("amount"));
+			jsonObject.put("unit", resultSet.getString("unit"));
+			jsonArray.put(jsonObject);
+		}
+
+		JSONObject result = new JSONObject();
+		result.put("raw-materials", jsonArray);
+
+		return result.toString();
 	}
 
-	public String getCookies(Request req, Response res) {
-		return "{\"cookies\":[]}";
+
+	public String getCookies(Request req, Response res) throws SQLException, JSONException {
+		String sql = "SELECT DISTINCT name FROM Cookie";
+		Statement statement = conn.createStatement();
+		ResultSet resultSet = statement.executeQuery(sql);
+
+		JSONArray jsonArray = new JSONArray();
+		while (resultSet.next()) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("name", resultSet.getString("name"));
+			jsonArray.put(jsonObject);
+		}
+		JSONObject result = new JSONObject();
+		result.put("cookies", jsonArray);
+
+		return result.toString();
 	}
 
 	public String getRecipes(Request req, Response res) {
