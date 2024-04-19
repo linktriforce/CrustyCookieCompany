@@ -11,31 +11,20 @@ import java.sql.*;
 import static krusty.Jsonizer.toJson;
 
 public class Database {
-	/**
-	 * Modify it to fit your environment and then use this string when connecting to your database!
-	 */
-	private static final String jdbcString = "jdbc:mysql://localhost/krusty";
-
-	// For use with MySQL or PostgreSQL
+	
+	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
 	private static final String jdbcUsername = "hbg29";
 	private static final String jdbcPassword = "pqx717bq";
 
 	private Connection conn;
 
-	 /**
-     * Create the database interface object. Connection to the database
-     * is performed later.
-     */
     public Database() {
         conn = null;
     }
 
 	public void connect() {
 		try {       	
-        	// Use "jdbc:mysql://puccini.cs.lth.se/" + userName if you using our shared server
-        	// If outside, this statement will hang until timeout.
-            conn = DriverManager.getConnection 
-                ("jdbc:mysql://puccini.cs.lth.se/hbg29", jdbcUsername, jdbcPassword);
+            conn = DriverManager.getConnection(jdbcString, jdbcUsername, jdbcPassword);
         }
         catch (SQLException e) {
             System.err.println(e);
@@ -46,16 +35,14 @@ public class Database {
 	// TODO: Implement and change output in all methods below!
 
 	public String getCustomers(Request req, Response res) {
-		//Detta är bara testkod. Kollade så att conenction till databasen fungerade vilken den nu gör!
 		String sql = "select * from WholesaleCustomer";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)){
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				System.out.println(rs.getString("name"));
-			}
+			String json = Jsonizer.toJson(rs, "customers");
+			return json;
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return "{}";
 	}
@@ -69,14 +56,34 @@ public class Database {
 	}
 
 	public String getRecipes(Request req, Response res) {
+		String sql = "select cookieName, ingredientName, amount, unit from Recipe\n" + //
+					"JOIN Ingredient on Recipe.ingredientName = Ingredient.name;";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)){
+			ResultSet rs = ps.executeQuery();
+			String json = Jsonizer.toJson(rs, "recipes");
+			return json;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "{}";
 	}
 
 	public String getPallets(Request req, Response res) {
+		String sql = "select * from Pallets";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)){
+			ResultSet rs = ps.executeQuery();
+			String json = Jsonizer.toJson(rs, "pallets");
+			return json;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "{\"pallets\":[]}";
 	}
 
 	public String reset(Request req, Response res) {
+	
 		return "{}";
 	}
 
