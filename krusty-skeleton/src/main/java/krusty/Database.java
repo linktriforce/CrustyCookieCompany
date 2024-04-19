@@ -191,6 +191,11 @@ public String getCookies(Request req, Response res) {
 			return Jsonizer.anythingToJson("ok", "status");
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				conn.rollback();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
 			return Jsonizer.anythingToJson(e.getMessage(), "status");
 		}
 	}
