@@ -32,7 +32,7 @@ public class Database {
 
 	// TODO: Implement and change output in all methods below!
 
-	public String getCustomers(Request req, Response res) {
+	public String getCustomers(Request req, Response res) throws SQLException{
 		String sql = "select * from WholesaleCustomer";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)){
@@ -53,8 +53,8 @@ public class Database {
 		return "{\"cookies\":[]}";
 	}
 
-	public String getRecipes(Request req, Response res) {
-		String sql = "select cookieName, ingredientName, amount, unit from Recipe\n" + //
+	public String getRecipes(Request req, Response res) throws SQLException{
+		String sql = "select cookieName, ingredientName, amount, unit from Recipe" + 
 					"JOIN Ingredient on Recipe.ingredientName = Ingredient.name;";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)){
