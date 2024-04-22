@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.sql.*;
 
-import static krusty.Jsonizer.toJson;
-
 public class Database {
 	
 	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
@@ -87,7 +85,55 @@ public class Database {
 		return "{}";
 	}
 
-	public String createPallet(Request req, Response res) {
+	public String createPallet(Request req, Response res) throws SQLException {
+		String selectedCookie = req.queryParams("cookie");
+	
+		String createPallet = "INSERT INTO Pallets (isBlocked, productionDate, cookieName) VALUES (0, NOW(), ?)";
+		String updateIngredients = "UPDATE Ingredient " +
+								"SET quantityTotal = quantityTotal - IFNULL( " +
+								"    (SELECT 54 * amount " +
+								"     FROM Recipe " +
+								"     WHERE cookieName = ? " +
+								"       AND Ingredient.name = Recipe.ingredientName " +
+								"    ), 0 " +
+								");";
+
+		conn.setAutoCommit(false);
+	
+		try (PreparedStatement ps = conn.prepareStatement(createPallet);
+			 PreparedStatement psUpdate = conn.prepareStatement(updateIngredients)) {
+			// Insert new pallet
+			ps.setString(1, selectedCookie);
+			int palletInserted = ps.executeUpdate();
+	
+			// Update ingredients
+			psUpdate.setString(1, selectedCookie);
+			int ingredientsUpdated = psUpdate.executeUpdate();
+	
+			if (palletInserted > 0 && ingredientsUpdated > 0) {
+				conn.commit();
+				return "{\"status\": \"ok\",\"id\": " + getPalletId() + "}";
+			} else {
+				conn.rollback();
+			}
+		} catch (SQLException e) {
+			conn.rollback();
+			e.printStackTrace();
+		}
+	
 		return "{}";
 	}
+	
+	// Helper method to retrieve the ID of the last inserted pallet
+	private int getPalletId() throws SQLException {
+		String query = "SELECT LAST_INSERT_ID() AS last_id";
+		try (PreparedStatement ps = conn.prepareStatement(query);
+			 ResultSet rs = ps.executeQuery()) {
+			if (rs.next()) {
+				return rs.getInt("last_id");
+			}
+		}
+		throw new SQLException("Unable to retrieve pallet ID");
+	}
+	
 }
