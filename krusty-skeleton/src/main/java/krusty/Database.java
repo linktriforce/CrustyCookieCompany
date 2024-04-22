@@ -57,9 +57,19 @@ public class Database {
 		return "{}";
 	}
 
-	public String getCookies(Request req, Response res) {
-		return "{\"cookies\":[]}";
-	}
+// joachim 2024-04-19 behövde getCookies för att kunna börja jobba på get createPallet
+public String getCookies(Request req, Response res) {
+    String sql = "SELECT * FROM Cookie";
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+        ResultSet rs = ps.executeQuery();
+        String json = Jsonizer.toJson(rs, "cookies");
+        return json;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return "{\"cookies\":[]}";
+}
 
 	public String getRecipes(Request req, Response res) throws SQLException{
 		String sql = "select cookieName, ingredientName, amount, unit from Recipe" + 
