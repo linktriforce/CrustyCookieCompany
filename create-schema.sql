@@ -13,13 +13,19 @@ CREATE TABLE Orders (
     FOREIGN KEY (customerID) REFERENCES WholesaleCustomer(customerID)
 );
 
+CREATE TABLE Cookie (
+    name VARCHAR(100) PRIMARY KEY
+);
+
 CREATE TABLE Pallets (
     palletID INT PRIMARY KEY AUTO_INCREMENT,
     isBlocked BOOLEAN,
     productionDate DATETIME,
     deliveredDate DATETIME,
     orderID INT,
-    FOREIGN KEY (orderID) REFERENCES Orders(orderID)
+    cookieName VARCHAR(100),
+    FOREIGN KEY (orderID) REFERENCES Orders(orderID),
+    FOREIGN KEY (cookieName) REFERENCES Cookie(name)
 );
 
 CREATE TABLE Ingredient (
@@ -28,12 +34,6 @@ CREATE TABLE Ingredient (
     unit VARCHAR(20),
     deliveredIntoStorage DATETIME,
     lastDeliveryQuantity DECIMAL(10,2)
-);
-
-CREATE TABLE Cookie (
-    name VARCHAR(100) PRIMARY KEY,
-    palletID INT,
-    FOREIGN KEY (palletID) REFERENCES Pallets(palletID)
 );
 
 CREATE TABLE CookieOrder (

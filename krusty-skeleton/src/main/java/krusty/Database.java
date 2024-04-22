@@ -3,6 +3,7 @@ package krusty;
 import spark.Request;
 import spark.Response;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -14,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
-
-import static krusty.Jsonizer.toJson;
 
 public class Database {
 	
@@ -41,7 +40,7 @@ public class Database {
 
 	// TODO: Implement and change output in all methods below!
 
-	public String getCustomers(Request req, Response res) {
+	public String getCustomers(Request req, Response res) throws SQLException{
 		String sql = "select * from WholesaleCustomer";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)){
@@ -57,23 +56,13 @@ public class Database {
 	public String getRawMaterials(Request req, Response res) {
 		return "{}";
 	}
-// joachim 2024-04-19 behövde getCookies för att kunna börja jobba på get createPallet
-public String getCookies(Request req, Response res) {
-    String sql = "SELECT * FROM Cookie";
 
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ResultSet rs = ps.executeQuery();
-        String json = Jsonizer.toJson(rs, "cookies");
-        return json;
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return "{\"cookies\":[]}";
-}
+	public String getCookies(Request req, Response res) {
+		return "{\"cookies\":[]}";
+	}
 
-
-	public String getRecipes(Request req, Response res) {
-		String sql = "select cookieName, ingredientName, amount, unit from Recipe\n" + //
+	public String getRecipes(Request req, Response res) throws SQLException{
+		String sql = "select cookieName, ingredientName, amount, unit from Recipe" + 
 					"JOIN Ingredient on Recipe.ingredientName = Ingredient.name;";
 
 		try (PreparedStatement ps = conn.prepareStatement(sql)){
@@ -86,10 +75,20 @@ public String getCookies(Request req, Response res) {
 		return "{}";
 	}
 
+	//Inte klar än
 	public String getPallets(Request req, Response res) {
-		String sql = "select * from Pallets";
+		String cookie = req.queryParams("cookie");
+		String from = req.queryParams("from");
+		String to = req.queryParams("to");
+		String blocked = req.queryParams("blocked");
+		
+		String sqlQuery = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, "+
+							"c.name AS customer, p.isBlocked AS blocked " +
+						"FROM Pallets p " +
+						"INNER JOIN Orders o ON p.orderID = o.orderID " +
+						"INNER JOIN WholesaleCustomer c ON o.customerID = c.customerID;";
 
-		try (PreparedStatement ps = conn.prepareStatement(sql)){
+		try (PreparedStatement ps = conn.prepareStatement(sqlQuery)){
 			ResultSet rs = ps.executeQuery();
 			String json = Jsonizer.toJson(rs, "pallets");
 			return json;
@@ -246,26 +245,55 @@ public String getCookies(Request req, Response res) {
 		// }
 	}
 
-	public String createPallet(Request req, Response res) {
-		String cookieName = req.queryParams("cookieName");
+	public String createPallet(Request req, Response res) throws SQLException {
+		String selectedCookie = req.queryParams("cookie");
+	
+		String createPallet = "INSERT INTO Pallets (isBlocked, productionDate, cookieName) VALUES (0, NOW(), ?)";
+		String updateIngredients = "UPDATE Ingredient " +
+								"SET quantityTotal = quantityTotal - IFNULL( " +
+								"    (SELECT 54 * amount " +
+								"     FROM Recipe " +
+								"     WHERE cookieName = ? " +
+								"       AND Ingredient.name = Recipe.ingredientName " +
+								"    ), 0 " +
+								");";
 
-		if (cookieName == null || cookieName.isEmpty()){
-			res.status(400);
-			return "Missing param: cookieName";
-		}
-
-		try {
-			
-			String sql = "INSERT INTO Pallets (cookieName) VALUES (?)";
-			PreparedStatement  ps = conn.prepareStatement(sql);
-			ps.setString(1, cookieName);
-			ps.executeUpdate();
-			ps.close();
-			return "Created Pallet";
+		conn.setAutoCommit(false);
+	
+		try (PreparedStatement ps = conn.prepareStatement(createPallet);
+			 PreparedStatement psUpdate = conn.prepareStatement(updateIngredients)) {
+			// Insert new pallet
+			ps.setString(1, selectedCookie);
+			int palletInserted = ps.executeUpdate();
+	
+			// Update ingredients
+			psUpdate.setString(1, selectedCookie);
+			int ingredientsUpdated = psUpdate.executeUpdate();
+	
+			if (palletInserted > 0 && ingredientsUpdated > 0) {
+				conn.commit();
+				return "{\"status\": \"ok\",\"id\": " + getPalletId() + "}";
+			} else {
+				conn.rollback();
+			}
 		} catch (SQLException e) {
-			res.status(500);
-			return "Failed to create pallet";
-			// TODO: handle exception
+			conn.rollback();
+			e.printStackTrace();
 		}
+	
+		return "{}";
 	}
+	
+	// Helper method to retrieve the ID of the last inserted pallet
+	private int getPalletId() throws SQLException {
+		String query = "SELECT LAST_INSERT_ID() AS last_id";
+		try (PreparedStatement ps = conn.prepareStatement(query);
+			 ResultSet rs = ps.executeQuery()) {
+			if (rs.next()) {
+				return rs.getInt("last_id");
+			}
+		}
+		throw new SQLException("Unable to retrieve pallet ID");
+	}
+	
 }
