@@ -3,6 +3,7 @@ package krusty;
 import spark.Request;
 import spark.Response;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -46,10 +47,28 @@ public class Database {
 	}
 
 	public String getRawMaterials(Request req, Response res) {
+		String sql = "select name, quantityTotal AS amount, unit from Ingredient";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)){
+			ResultSet rs = ps.executeQuery();
+			String json = Jsonizer.toJson(rs, "raw-materials");
+			return json;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "{}";
 	}
 
 	public String getCookies(Request req, Response res) {
+		String sql = "select * from Cookie";
+
+		try (PreparedStatement ps = conn.prepareStatement(sql)){
+			ResultSet rs = ps.executeQuery();
+			String json = Jsonizer.toJson(rs, "cookies");
+			return json;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return "{\"cookies\":[]}";
 	}
 
@@ -67,10 +86,20 @@ public class Database {
 		return "{}";
 	}
 
+	//Inte klar än
 	public String getPallets(Request req, Response res) {
-		String sql = "select * from Pallets";
+		String cookie = req.queryParams("cookie");
+		String from = req.queryParams("from");
+		String to = req.queryParams("to");
+		String blocked = req.queryParams("blocked");
+		
+		String sqlQuery = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, "+
+							"c.name AS customer, p.isBlocked AS blocked " +
+						"FROM Pallets p " +
+						"INNER JOIN Orders o ON p.orderID = o.orderID " +
+						"INNER JOIN WholesaleCustomer c ON o.customerID = c.customerID;";
 
-		try (PreparedStatement ps = conn.prepareStatement(sql)){
+		try (PreparedStatement ps = conn.prepareStatement(sqlQuery)){
 			ResultSet rs = ps.executeQuery();
 			String json = Jsonizer.toJson(rs, "pallets");
 			return json;
