@@ -1,3 +1,14 @@
+set foreign_key_checks = 0;
+truncate table WholesaleCustomer;
+truncate table Orders;
+truncate table Pallets;
+truncate table Ingredient;
+truncate table Cookie;
+truncate table CookieOrder;
+truncate table Recipe;
+set foreign_key_checks = 1;
+
+
 -- Inserting data into WholesaleCustomer table
 INSERT INTO WholesaleCustomer (name, address) VALUES
 ('Bjudkakor AB', 'Ystad'),
