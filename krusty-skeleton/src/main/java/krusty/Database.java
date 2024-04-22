@@ -47,28 +47,10 @@ public class Database {
 	}
 
 	public String getRawMaterials(Request req, Response res) {
-		String sql = "select name, quantityTotal AS amount, unit from Ingredient";
-
-		try (PreparedStatement ps = conn.prepareStatement(sql)){
-			ResultSet rs = ps.executeQuery();
-			String json = Jsonizer.toJson(rs, "raw-materials");
-			return json;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		return "{}";
 	}
 
 	public String getCookies(Request req, Response res) {
-		String sql = "select * from Cookie";
-
-		try (PreparedStatement ps = conn.prepareStatement(sql)){
-			ResultSet rs = ps.executeQuery();
-			String json = Jsonizer.toJson(rs, "cookies");
-			return json;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		return "{\"cookies\":[]}";
 	}
 
