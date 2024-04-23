@@ -101,28 +101,52 @@ public class Database {
 		return "{}";
 	}
 
-	//Inte klar än
 	public String getPallets(Request req, Response res) {
-		String cookie = req.queryParams("cookie");
-		String from = req.queryParams("from");
-		String to = req.queryParams("to");
-		String blocked = req.queryParams("blocked");
-		
-		String sqlQuery = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, "+
-							"c.name AS customer, p.isBlocked AS blocked " +
-						"FROM Pallets p " +
-						"INNER JOIN Orders o ON p.orderID = o.orderID " +
-						"INNER JOIN WholesaleCustomer c ON o.customerID = c.customerID;";
+		String sql = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, wc.name AS customer, IF(p.isBlocked, 'yes', 'no') AS blocked FROM Pallets p JOIN Orders o ON p.orderID = o.orderID JOIN WholesaleCustomer wc ON o.customerID = wc.customerID WHERE 1=1 ";
+       
+		// ArrayList för att spara värden
+        ArrayList<Object> values = new ArrayList<>();
 
-		try (PreparedStatement ps = conn.prepareStatement(sqlQuery)){
-			ResultSet rs = ps.executeQuery();
+        // Check and build SQL query dynamically based on query parameters
+        if (req.queryParams("from") != null) {
+            sql += " AND productionDate >= ?";    				//
+            values.add(req.queryParams("from"));
+        }
+        if (req.queryParams("to") != null) {		// kan va att de blir fel när man lägger till "AND" efter "Order By"
+            sql += " AND productionDate <= ?";
+            values.add(req.queryParams("to"));
+        }
+        if (req.queryParams("cookie") != null) {
+            sql += " AND cookieName = ?";
+            values.add(req.queryParams("cookie"));
+        }
+        if (req.queryParams("blocked") != null) {
+            sql += " AND blocked = ?";
+            values.add(req.queryParams("blocked").equals("yes")); // Convert "yes" to boolean
+        }
+
+		sql += "Order by productionDate ";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set parameters safely				//kan man slänga sig med objects så eller måste de vara rätt typer typ string
+            for (int i = 0; i < values.size(); i++) {
+                ps.setObject(i + 1, values.get(i));
+            }
+
+            // Execute query
+            ResultSet rs = ps.executeQuery();
+
 			String json = Jsonizer.toJson(rs, "pallets");
 			return json;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "{\"pallets\":[]}";
-	}
+            // Process results
+            
+        } catch (SQLException e) {
+            // Handle exceptions
+            e.printStackTrace();
+            return "An error occurred";
+        }
+    }
 
 	public String reset(Request req, Response res) {
 	
