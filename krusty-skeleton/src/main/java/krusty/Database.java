@@ -10,6 +10,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
+
+import org.sqlite.SQLiteException;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 
 public class Database {
@@ -68,7 +75,6 @@ public class Database {
 
 		return result.toString();
 	}
-
 
 	public String getCookies(Request req, Response res) throws SQLException, JSONException {
 		String sql = "SELECT DISTINCT name FROM Cookie";
@@ -149,8 +155,52 @@ public class Database {
     }
 
 	public String reset(Request req, Response res) {
+
+		// Test to se if File and BufferedReader works
+		// String sqlFile = "initial-data.sql";
+
+		// try (BufferedReader reader = new BufferedReader(new FileReader(sqlFile))) {
+		// 	StringBuilder queryBuilder = new StringBuilder();
+		// 	String line;
+		// 	while ((line = reader.readLine()) != null){
+		// 		System.out.println(line);
+		// 	}
+		// }
+		// catch(IOException e){
+		// 	System.out.println(e);
+		// }
+		// return "{}";
+		
+		String sqlFile = "initial-data.sql";
+
+		try (BufferedReader reader = new BufferedReader(new FileReader(sqlFile))) {
+			StringBuilder queryBuilder = new StringBuilder();
+			String line;
 	
-		return "{}";
+			while ((line = reader.readLine()) != null) {
+				// Ignorera tomma rader och kommentarer
+				if (!line.trim().isEmpty() && !line.startsWith("--")) {
+					queryBuilder.append(line);
+	
+					// Om det finns en semikolon, exekvera frågan
+					if (line.endsWith(";")) {
+						String query = queryBuilder.toString();
+						try (PreparedStatement ps = conn.prepareStatement(query)) {
+							ps.executeUpdate();
+						} catch (SQLException e) {
+							e.printStackTrace();
+							return Jsonizer.anythingToJson(e.getMessage(), "status");
+						}
+						// Återställ StringBuilder för nästa fråga
+						queryBuilder = new StringBuilder();
+					}
+				}
+			}
+			return Jsonizer.anythingToJson("ok", "status");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Jsonizer.anythingToJson(e.getMessage(), "status");
+		}
 	}
 
 	public String createPallet(Request req, Response res) throws SQLException {
