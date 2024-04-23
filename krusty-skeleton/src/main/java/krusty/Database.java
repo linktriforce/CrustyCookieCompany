@@ -140,6 +140,7 @@ public String getCookies(Request req, Response res) {
 			e.printStackTrace();
 			return Jsonizer.anythingToJson(e.getMessage(), "status");
 		}
+	}
 
 	public String createPallet(Request req, Response res) throws SQLException {
 		String selectedCookie = req.queryParams("cookie");
