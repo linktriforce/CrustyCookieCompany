@@ -1,5 +1,8 @@
 package krusty;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
 
@@ -17,7 +20,7 @@ import java.io.IOException;
 import java.sql.*;
 
 public class Database {
-	
+
 	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
 	private static final String jdbcUsername = "hbg29";
 	private static final String jdbcPassword = "pqx717bq";
@@ -29,7 +32,7 @@ public class Database {
     }
 
 	public void connect() {
-		try {       	
+		try {
             conn = DriverManager.getConnection(jdbcString, jdbcUsername, jdbcPassword);
         }
         catch (SQLException e) {
@@ -53,23 +56,42 @@ public class Database {
 		return "{}";
 	}
 
-	public String getRawMaterials(Request req, Response res) {
-		return "{}";
+	public String getRawMaterials(Request req, Response res) throws SQLException, JSONException {
+		String sql = "SELECT name, quantityTotal AS amount, unit FROM Ingredient";
+		Statement statement = conn.createStatement();
+		ResultSet resultSet = statement.executeQuery(sql);
+
+		JSONArray jsonArray = new JSONArray();
+		while (resultSet.next()) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("name", resultSet.getString("name"));
+			jsonObject.put("amount", resultSet.getInt("amount"));
+			jsonObject.put("unit", resultSet.getString("unit"));
+			jsonArray.put(jsonObject);
+		}
+
+		JSONObject result = new JSONObject();
+		result.put("raw-materials", jsonArray);
+
+		return result.toString();
 	}
 
-// joachim 2024-04-19 behövde getCookies för att kunna börja jobba på get createPallet
-public String getCookies(Request req, Response res) {
-    String sql = "SELECT * FROM Cookie";
+	public String getCookies(Request req, Response res) throws SQLException, JSONException {
+		String sql = "SELECT DISTINCT name FROM Cookie";
+		Statement statement = conn.createStatement();
+		ResultSet resultSet = statement.executeQuery(sql);
 
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ResultSet rs = ps.executeQuery();
-        String json = Jsonizer.toJson(rs, "cookies");
-        return json;
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-    return "{\"cookies\":[]}";
-}
+		JSONArray jsonArray = new JSONArray();
+		while (resultSet.next()) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("name", resultSet.getString("name"));
+			jsonArray.put(jsonObject);
+		}
+		JSONObject result = new JSONObject();
+		result.put("cookies", jsonArray);
+
+		return result.toString();
+	}
 
 	public String getRecipes(Request req, Response res) throws SQLException{
 		String sql = "select cookieName, ingredientName, amount, unit from Recipe" + 
@@ -85,28 +107,52 @@ public String getCookies(Request req, Response res) {
 		return "{}";
 	}
 
-	//Inte klar än
 	public String getPallets(Request req, Response res) {
-		String cookie = req.queryParams("cookie");
-		String from = req.queryParams("from");
-		String to = req.queryParams("to");
-		String blocked = req.queryParams("blocked");
-		
-		String sqlQuery = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, "+
-							"c.name AS customer, p.isBlocked AS blocked " +
-						"FROM Pallets p " +
-						"INNER JOIN Orders o ON p.orderID = o.orderID " +
-						"INNER JOIN WholesaleCustomer c ON o.customerID = c.customerID;";
+		String sql = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, wc.name AS customer, IF(p.isBlocked, 'yes', 'no') AS blocked FROM Pallets p JOIN Orders o ON p.orderID = o.orderID JOIN WholesaleCustomer wc ON o.customerID = wc.customerID WHERE 1=1 ";
+       
+		// ArrayList för att spara värden
+        ArrayList<Object> values = new ArrayList<>();
 
-		try (PreparedStatement ps = conn.prepareStatement(sqlQuery)){
-			ResultSet rs = ps.executeQuery();
+        // Check and build SQL query dynamically based on query parameters
+        if (req.queryParams("from") != null) {
+            sql += " AND productionDate >= ?";    				//
+            values.add(req.queryParams("from"));
+        }
+        if (req.queryParams("to") != null) {		// kan va att de blir fel när man lägger till "AND" efter "Order By"
+            sql += " AND productionDate <= ?";
+            values.add(req.queryParams("to"));
+        }
+        if (req.queryParams("cookie") != null) {
+            sql += " AND cookieName = ?";
+            values.add(req.queryParams("cookie"));
+        }
+        if (req.queryParams("blocked") != null) {
+            sql += " AND blocked = ?";
+            values.add(req.queryParams("blocked").equals("yes")); // Convert "yes" to boolean
+        }
+
+		sql += "Order by productionDate ";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set parameters safely				//kan man slänga sig med objects så eller måste de vara rätt typer typ string
+            for (int i = 0; i < values.size(); i++) {
+                ps.setObject(i + 1, values.get(i));
+            }
+
+            // Execute query
+            ResultSet rs = ps.executeQuery();
+
 			String json = Jsonizer.toJson(rs, "pallets");
 			return json;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return "{\"pallets\":[]}";
-	}
+            // Process results
+            
+        } catch (SQLException e) {
+            // Handle exceptions
+            e.printStackTrace();
+            return "An error occurred";
+        }
+    }
 
 	public String reset(Request req, Response res) {
 

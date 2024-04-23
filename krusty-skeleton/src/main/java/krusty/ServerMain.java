@@ -79,5 +79,6 @@ public class ServerMain {
 
 	public static void main(String[] args) throws InterruptedException {
 		new ServerMain().startServer();
+
 	}
 }
