@@ -109,6 +109,21 @@ public String getCookies(Request req, Response res) {
 	}
 
 	public String reset(Request req, Response res) {
+
+		// Test to se if File and BufferedReader works
+		// String sqlFile = "initial-data.sql";
+
+		// try (BufferedReader reader = new BufferedReader(new FileReader(sqlFile))) {
+		// 	StringBuilder queryBuilder = new StringBuilder();
+		// 	String line;
+		// 	while ((line = reader.readLine()) != null){
+		// 		System.out.println(line);
+		// 	}
+		// }
+		// catch(IOException e){
+		// 	System.out.println(e);
+		// }
+		// return "{}";
 		
 		String sqlFile = "initial-data.sql";
 
@@ -130,7 +145,7 @@ public String getCookies(Request req, Response res) {
 							e.printStackTrace();
 							return Jsonizer.anythingToJson(e.getMessage(), "status");
 						}
-						// Återställ strängbyggaren för nästa fråga
+						// Återställ StringBuilder för nästa fråga
 						queryBuilder = new StringBuilder();
 					}
 				}
