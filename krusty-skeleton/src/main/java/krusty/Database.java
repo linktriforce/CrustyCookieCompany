@@ -228,6 +228,7 @@ public class Database {
 			// Insert new pallet
 			ps.setString(1, selectedCookie);
 			int palletInserted = ps.executeUpdate();
+			if (palletInserted == 0) return "{\"status\": \"unknown cookie\"}";
 	
 			// Update ingredients
 			psUpdate.setString(1, selectedCookie);
@@ -242,6 +243,7 @@ public class Database {
 		} catch (SQLException e) {
 			conn.rollback();
 			e.printStackTrace();
+			return "{\"status\": \"error\" }";
 		}
 	
 		return "{}";
