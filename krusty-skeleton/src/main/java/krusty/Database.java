@@ -108,34 +108,39 @@ public class Database {
 	}
 
 	public String getPallets(Request req, Response res) {
-		String sql = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, wc.name AS customer, IF(p.isBlocked, 'yes', 'no') AS blocked FROM Pallets p JOIN Orders o ON p.orderID = o.orderID JOIN WholesaleCustomer wc ON o.customerID = wc.customerID WHERE 1=1 ";
+
+		String sql = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, "+
+						"wc.name AS customer, IF(p.isBlocked, 'yes', 'no') AS blocked "+
+					"FROM Pallets p "+
+					"Left JOIN Orders o ON p.orderID = o.orderID "+
+					"left JOIN WholesaleCustomer wc ON o.customerID = wc.customerID "+
+					"WHERE 1=1 ";
        
 		// ArrayList för att spara värden
         ArrayList<Object> values = new ArrayList<>();
 
         // Check and build SQL query dynamically based on query parameters
         if (req.queryParams("from") != null) {
-            sql += " AND productionDate >= ?";    				//
+            sql += " AND p.productionDate >= ?";    				
             values.add(req.queryParams("from"));
         }
-        if (req.queryParams("to") != null) {		// kan va att de blir fel när man lägger till "AND" efter "Order By"
-            sql += " AND productionDate <= ?";
+        if (req.queryParams("to") != null) {
+			sql += " AND p.productionDate <= ?";
             values.add(req.queryParams("to"));
         }
         if (req.queryParams("cookie") != null) {
-            sql += " AND cookieName = ?";
+            sql += " AND p.cookieName = ?";
             values.add(req.queryParams("cookie"));
         }
         if (req.queryParams("blocked") != null) {
-            sql += " AND blocked = ?";
+            sql += " AND p.isBlocked = ?";
             values.add(req.queryParams("blocked").equals("yes")); // Convert "yes" to boolean
         }
-
-		sql += "Order by productionDate ";
+		sql += " Order by p.productionDate";
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            // Set parameters safely				//kan man slänga sig med objects så eller måste de vara rätt typer typ string
+            // Set parameters safely
             for (int i = 0; i < values.size(); i++) {
                 ps.setObject(i + 1, values.get(i));
             }
