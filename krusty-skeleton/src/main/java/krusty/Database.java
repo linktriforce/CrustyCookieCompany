@@ -165,21 +165,6 @@ public class Database {
 	 * @return returns "ok" if database was reset, "error" if something went wrong
 	 */
 	public String reset(Request req, Response res) {
-
-		// Test to se if File and BufferedReader works
-		// String sqlFile = "initial-data.sql";
-
-		// try (BufferedReader reader = new BufferedReader(new FileReader(sqlFile))) {
-		// 	StringBuilder queryBuilder = new StringBuilder();
-		// 	String line;
-		// 	while ((line = reader.readLine()) != null){
-		// 		System.out.println(line);
-		// 	}
-		// }
-		// catch(IOException e){
-		// 	System.out.println(e);
-		// }
-		// return "{}";
 		
 		String sqlFile = "initial-data.sql";
 
