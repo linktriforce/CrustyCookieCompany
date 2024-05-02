@@ -158,7 +158,12 @@ public class Database {
             return "An error occurred";
         }
     }
-
+	/**
+	 * @Author Joachim Mohn
+	 * @param req
+	 * @param res
+	 * @return returns "ok" if database was reset, "error" if something went wrong
+	 */
 	public String reset(Request req, Response res) {
 
 		// Test to se if File and BufferedReader works
