@@ -114,6 +114,7 @@ public class Database {
 
 	/**
 	 * Retrieves the recipes from the database which produce 100 cookies
+	 * @author Gustav Franzén
 	 * @param req
 	 * @param res
 	 * @return 
