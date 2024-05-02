@@ -7,18 +7,14 @@ import spark.Request;
 import spark.Response;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.sqlite.SQLiteException;
-
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 
+/**
+ * 
+ */
 public class Database {
 
 	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
@@ -41,8 +37,15 @@ public class Database {
         }
 	}
 
-	// TODO: Implement and change output in all methods below!
-
+	/**
+	 * Retrieves customers from the database
+	 * 
+	 * @author Albin Olausson
+	 * @param req
+	 * @param res
+	 * @return customers in json format
+	 * @throws SQLException
+	 */
 	public String getCustomers(Request req, Response res) throws SQLException{
 		String sql = "select * from WholesaleCustomer";
 
@@ -56,6 +59,14 @@ public class Database {
 		return "{}";
 	}
 
+	/** 
+	* @author Kristmann Thorsteinsson
+	* @param req
+	* @param res
+	* @return Retrieves the name, amount and unit of raw materials
+	* @throws SQLException
+	* @throws JSONException
+	*/
 	public String getRawMaterials(Request req, Response res) throws SQLException, JSONException {
 		String sql = "SELECT name, quantityTotal AS amount, unit FROM Ingredient";
 		Statement statement = conn.createStatement();
@@ -76,6 +87,14 @@ public class Database {
 		return result.toString();
 	}
 
+	/**
+	 * @author Kristmann Thorsteinsson
+	 * @param req
+	 * @param res
+	 * @return Retrieves a list of cookies
+	 * @throws SQLException
+	 * @throws JSONException
+	 */
 	public String getCookies(Request req, Response res) throws SQLException, JSONException {
 		String sql = "SELECT DISTINCT name FROM Cookie";
 		Statement statement = conn.createStatement();
@@ -93,6 +112,13 @@ public class Database {
 		return result.toString();
 	}
 
+	/**
+	 * Retrieves the recipes from the database which produce 100 cookies
+	 * @param req
+	 * @param res
+	 * @return 
+	 * @throws SQLException
+	 */
 	public String getRecipes(Request req, Response res) throws SQLException{
 		String sql = "select cookieName, ingredientName, amount, unit from Recipe" + 
 					"JOIN Ingredient on Recipe.ingredientName = Ingredient.name;";
@@ -107,6 +133,13 @@ public class Database {
 		return "{}";
 	}
 
+	/**
+	 * Returns all produced pallets sorted by production date (newest first)
+	 * @author Gustav Franzén
+	 * @param req
+	 * @param res
+	 * @return
+	 */
 	public String getPallets(Request req, Response res) {
 
 		String sql = "SELECT p.palletID AS id, p.cookieName AS cookie, p.productionDate AS production_date, "+
@@ -116,7 +149,6 @@ public class Database {
 					"left JOIN WholesaleCustomer wc ON o.customerID = wc.customerID "+
 					"WHERE 1=1 ";
        
-		// ArrayList för att spara värden
         ArrayList<Object> values = new ArrayList<>();
 
         // Check and build SQL query dynamically based on query parameters
@@ -145,7 +177,6 @@ public class Database {
                 ps.setObject(i + 1, values.get(i));
             }
 
-            // Execute query
             ResultSet rs = ps.executeQuery();
 
 			String json = Jsonizer.toJson(rs, "pallets");
@@ -153,28 +184,18 @@ public class Database {
             // Process results
             
         } catch (SQLException e) {
-            // Handle exceptions
             e.printStackTrace();
             return "An error occurred";
         }
     }
 
+	/** 
+	* @Author Joachim Mohn
+	* @param req
+	* @param res
+	* @return returns "ok" if database was reset, "error" if something went wrong
+	*/
 	public String reset(Request req, Response res) {
-
-		// Test to se if File and BufferedReader works
-		// String sqlFile = "initial-data.sql";
-
-		// try (BufferedReader reader = new BufferedReader(new FileReader(sqlFile))) {
-		// 	StringBuilder queryBuilder = new StringBuilder();
-		// 	String line;
-		// 	while ((line = reader.readLine()) != null){
-		// 		System.out.println(line);
-		// 	}
-		// }
-		// catch(IOException e){
-		// 	System.out.println(e);
-		// }
-		// return "{}";
 		
 		String sqlFile = "initial-data.sql";
 
@@ -208,6 +229,15 @@ public class Database {
 		}
 	}
 
+	/**
+	 * Creates a pallet of chosen cookie by client from the website. 
+	 * A pallet contains 5400 cookies (15 cookies per bag, 10 bags per box, 36 boxes per pallet)
+	 * @author Albin Olausson
+	 * @param req
+	 * @param res
+	 * @return ok and id och created pallet
+	 * @throws SQLException
+	 */
 	public String createPallet(Request req, Response res) throws SQLException {
 		String selectedCookie = req.queryParams("cookie");
 	
