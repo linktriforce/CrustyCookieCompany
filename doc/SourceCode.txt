@@ -12,9 +12,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 
-/**
- * 
- */
 public class Database {
 
 	private static final String jdbcString = "jdbc:mysql://puccini.cs.lth.se/hbg29";
