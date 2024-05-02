@@ -204,11 +204,9 @@ public class Database {
 			String line;
 	
 			while ((line = reader.readLine()) != null) {
-				// Ignorera tomma rader och kommentarer
 				if (!line.trim().isEmpty() && !line.startsWith("--")) {
 					queryBuilder.append(line);
 	
-					// Om det finns en semikolon, exekvera frågan
 					if (line.endsWith(";")) {
 						String query = queryBuilder.toString();
 						try (PreparedStatement ps = conn.prepareStatement(query)) {
@@ -217,7 +215,7 @@ public class Database {
 							e.printStackTrace();
 							return Jsonizer.anythingToJson(e.getMessage(), "status");
 						}
-						// Återställ StringBuilder för nästa fråga
+						// Reset stringbuilder for the next query
 						queryBuilder = new StringBuilder();
 					}
 				}
